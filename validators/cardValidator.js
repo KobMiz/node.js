@@ -4,7 +4,9 @@ const cardSchema = Joi.object({
   title: Joi.string().required(),
   subtitle: Joi.string().optional(),
   description: Joi.string().required(),
-  phone: Joi.string().required(),
+  phone: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required(),
   email: Joi.string().email().optional(),
   web: Joi.string().uri().optional(),
   image: Joi.object({

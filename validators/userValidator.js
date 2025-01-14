@@ -10,14 +10,16 @@ const userSchema = Joi.object({
   password: Joi.string().min(8).required().messages({
     "string.min": "Password length must be at least 8 characters long.",
   }),
-  phone: Joi.string().required(),
+  phone: Joi.string()
+    .pattern(/^[0-9]{10}$/)
+    .required(),
   address: Joi.object({
     country: Joi.string().required(),
     city: Joi.string().required(),
     street: Joi.string().required(),
     houseNumber: Joi.number().required(),
   }).required(),
-  isAdmin: Joi.boolean().optional(), 
+  isAdmin: Joi.boolean().optional(),
   isBusiness: Joi.boolean().optional(),
 });
 
