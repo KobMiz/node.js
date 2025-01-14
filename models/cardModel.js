@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema(
     },
     phone: { type: String, required: true, minlength: 10, maxlength: 15 },
     email: { type: String, match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
-    web: { type: String },
+    web: { type: String, match: /^(https?:\/\/).+/ },
     image: {
       url: { type: String },
       alt: { type: String },
@@ -51,12 +51,12 @@ cardSchema.pre("findOneAndUpdate", async function (next) {
   if (bizNumber) {
     const existingCard = await mongoose.model("Card").findOne({ bizNumber });
     if (existingCard) {
-      const error = new Error("bizNumber already taken by another business");
-      next(error);
+      return next(new Error("bizNumber already taken by another business"));
     }
   }
   next();
 });
+
 
 const Card = mongoose.model("Card", cardSchema);
 

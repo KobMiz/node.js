@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true },
     failedLoginAttempts: { type: Number, default: 0 },
-    lockUntil: { type: Date }, 
+    lockUntil: { type: Date },
     address: {
       state: { type: String, default: "" },
       country: { type: String, required: true, maxlength: 50 },
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       houseNumber: { type: Number, required: true, min: 1 },
     },
     image: {
-      url: { type: String, default: "https://example.com/default-profile.jpg" },
+      url: { type: String, match: /^(https?:\/\/).+/ },
       alt: { type: String, default: "Default user profile image" },
     },
   },
