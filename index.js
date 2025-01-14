@@ -15,7 +15,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-// MongoDB URI selection based on environment
 const MONGO_URI =
   NODE_ENV === "production"
     ? process.env.MONGO_URI_PROD
@@ -23,7 +22,6 @@ const MONGO_URI =
 
 console.log(`Running in ${NODE_ENV} mode`);
 
-// MongoDB connection
 mongoose
   .connect(MONGO_URI)
   .then(() => {
@@ -48,10 +46,8 @@ mongoose.connection.on("disconnected", () =>
   console.log("Mongoose disconnected")
 );
 
-// Morgan logging
 app.use(morgan(NODE_ENV === "development" ? "dev" : "tiny"));
 
-// CORS configuration
 const allowedOrigins =
   NODE_ENV === "development"
     ? ["http://localhost:3000"]
@@ -69,22 +65,17 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// JSON body parser
 app.use(express.json());
 
-// Routes
 app.use("/users", userRoutes);
 app.use("/cards", cardRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Default route
 app.get("/", (req, res) => res.send("Server is running!"));
 
-// 404 handler
 app.use((req, res) => res.status(404).json({ error: "Not Found" }));
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res
@@ -92,7 +83,6 @@ app.use((err, req, res, next) => {
     .json({ error: err.message || "Internal Server Error" });
 });
 
-// Start server
 app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
 );
