@@ -4,7 +4,6 @@ const Ticket = require("../models/ticket");
 const { ticketSchema } = require("../validators/ticketValidator");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-
 const checkAdminOrOwner = (ticket, user) => {
   return ticket.userId.toString() === user._id || user.isAdmin;
 };
