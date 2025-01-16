@@ -45,6 +45,8 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ isAdmin: 1 });
 userSchema.index({ isBusiness: 1 });
+userSchema.index({ lockUntil: 1 });
+
 
 const User = mongoose.model("User", userSchema);
 

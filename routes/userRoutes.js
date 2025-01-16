@@ -38,10 +38,21 @@ router.post("/login", async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
 
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      console.log(`[Login Failed] Email not found: ${email}`);
+      return res.status(404).json({ error: "User not found" });
+    }
 
     if (user.failedLoginAttempts >= 3 && Date.now() < user.lockUntil) {
-      return res.status(403).json({ error: "Account locked for 24 hours" });
+      const remainingLockTime = Math.ceil(
+        (user.lockUntil - Date.now()) / (60 * 1000)
+      );
+      console.log(
+        `[Account Locked] Email: ${email}, Remaining lock time: ${remainingLockTime} minutes`
+      );
+      return res.status(403).json({
+        error: `Account locked. Try again in ${remainingLockTime} minutes.`,
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -50,6 +61,15 @@ router.post("/login", async (req, res, next) => {
 
       if (user.failedLoginAttempts >= 3) {
         user.lockUntil = Date.now() + 24 * 60 * 60 * 1000;
+        console.log(
+          `[Account Locked] Email: ${email}, Locked until: ${new Date(
+            user.lockUntil
+          ).toISOString()}`
+        );
+      } else {
+        console.log(
+          `[Login Failed] Email: ${email}, Failed attempts: ${user.failedLoginAttempts}`
+        );
       }
 
       await user.save();
@@ -57,9 +77,10 @@ router.post("/login", async (req, res, next) => {
     }
 
     user.failedLoginAttempts = 0;
-    user.lockUntil = undefined; 
+    user.lockUntil = undefined;
     await user.save();
 
+    console.log(`[Login Successful] Email: ${email}`);
     const token = jwt.sign(
       { _id: user._id, isBusiness: user.isBusiness, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
@@ -68,6 +89,7 @@ router.post("/login", async (req, res, next) => {
 
     res.json({ token });
   } catch (err) {
+    console.error(`[Login Error] Email: ${email}, Error: ${err.message}`);
     next(err);
   }
 });

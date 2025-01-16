@@ -3,6 +3,8 @@ const Card = require("../models/cardModel");
 const { cardSchema } = require("../validators/cardValidator");
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const { toggleLike } = require("../controllers/cardController");
+
 
 const router = express.Router();
 
@@ -300,5 +302,27 @@ router.put(
     }
   }
 );
+
+/**
+ * @swagger
+ * /cards/{id}/like:
+ *   patch:
+ *     summary: Toggle like on a card
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the card
+ *     responses:
+ *       200:
+ *         description: Like toggled successfully
+ *       404:
+ *         description: Card not found
+ *       403:
+ *         description: Access denied
+ */
+router.patch("/:id/like", authMiddleware, toggleLike);
 
 module.exports = router;
