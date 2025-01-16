@@ -68,6 +68,8 @@ JWT_SECRET=your-jwt-secret
 NODE_ENV=development
 ```
 
+Alternatively, you can refer to the `.env.example` file included in the repository for guidance.
+
 ### Load Initial Data:
 
 To load predefined users and cards, run:
@@ -152,6 +154,7 @@ nodejs-api-project/
 ├── config/
 ├── initialData.js
 ├── swaggerConfig.js
+├── .env.example
 ├── index.js
 ├── .env.example
 └── package.json
